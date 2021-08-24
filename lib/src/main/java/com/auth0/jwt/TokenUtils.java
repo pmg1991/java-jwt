@@ -12,7 +12,7 @@ abstract class TokenUtils {
      * @throws JWTDecodeException if the Token doesn't have 3 parts.
      */
     static String[] splitToken(String token) throws JWTDecodeException {
-        String[] parts = token.split("\\.");
+        String[] parts = fastSplitDot(token);
         if (parts.length == 2 && token.endsWith(".")) {
             //Tokens with alg='none' have empty String as Signature.
             parts = new String[]{parts[0], parts[1], ""};
@@ -22,4 +22,22 @@ abstract class TokenUtils {
         }
         return parts;
     }
+    public static String[] fastSplitDot(final String text) {
+  	  
+	    final ArrayList<String> result = new ArrayList<String>();
+	    final int len = text.length();
+	    int tokenStart = 0;	   
+	    char[] chars = text.toCharArray();
+	    for (int pos = 0; pos < len; ++pos) {
+	        char c = chars[pos];
+	        if ( c == '.') {	           
+	            result.add(text.substring(tokenStart, pos));	               
+	            tokenStart = pos + 1;
+	        }
+	    }
+	    if (tokenStart < len) {
+	        result.add(text.substring(tokenStart));
+	    }	    
+	    return result.toArray(new String[result.size()]);
+	}
 }
